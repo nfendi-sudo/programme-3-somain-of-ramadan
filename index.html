@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج شهر رمضان - منصة نوفل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #112236;
+            --secondary-dark: #1a365d;
+            --gold: #d4af37;
+            --gold-light: #fbe58f;
+            --text-light: #f8f9fa;
+            --discord: #5865F2;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            background-image: linear-gradient(rgba(17, 34, 54, 0.9), rgba(17, 34, 54, 0.9)), url('https://www.transparenttextures.com/patterns/arabesque.png');
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--gold-light);
+        }
+
+        /* Tabs for Days */
+        .days-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) var(--primary-dark);
+        }
+
+        .days-nav::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .days-nav::-webkit-scrollbar-thumb {
+            background-color: var(--gold);
+            border-radius: 10px;
+        }
+
+        .day-btn {
+            background-color: var(--secondary-dark);
+            color: var(--text-light);
+            border: 1px solid var(--gold);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .day-btn:hover {
+            background-color: var(--gold);
+            color: var(--primary-dark);
+        }
+
+        .day-btn.active {
+            background-color: var(--gold);
+            color: var(--primary-dark);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Schedule Content */
+        .schedule-card {
+            display: none;
+            background-color: var(--secondary-dark);
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .schedule-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .day-title {
+            color: var(--gold);
+            text-align: center;
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--gold);
+            padding-bottom: 10px;
+        }
+
+        .time-slot {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            border-right: 4px solid var(--gold);
+        }
+
+        .time {
+            font-weight: 900;
+            color: var(--gold-light);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subject-type {
+            font-size: 0.9rem;
+            background: var(--gold);
+            color: var(--primary-dark);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .task {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-top: 5px;
+        }
+
+        .discord-badge {
+            background-color: var(--discord);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 10px;
+        }
+
+        .math-badge {
+            background-color: #e74c3c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Daily Task Note */
+        .daily-note {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--gold);
+        }
+        
+        .daily-note span {
+            color: var(--gold);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo">منصة نوفل</div>
+            <h1 class="title">رمضان كريم</h1>
+            <div class="subtitle">برنامج الأسبوع الثالث (انطلاقاً من الإثنين)</div>
+        </header>
+
+        <div class="daily-note">
+            <span>📌 مهمة يومية مستمرة:</span> مراجعة التاريخ والجغرافيا (الدرس الأخير الوحدة 2) موزعة على كامل أيام الأسبوع.
+        </div>
+
+        <div class="days-nav" id="daysNav">
+            <button class="day-btn active" onclick="showDay('monday')">الإثنين</button>
+            <button class="day-btn" onclick="showDay('tuesday')">الثلاثاء</button>
+            <button class="day-btn" onclick="showDay('wednesday')">الأربعاء</button>
+            <button class="day-btn" onclick="showDay('thursday')">الخميس</button>
+            <button class="day-btn" onclick="showDay('friday')">الجمعة</button>
+            <button class="day-btn" onclick="showDay('saturday')">السبت</button>
+            <button class="day-btn" onclick="showDay('sunday')">الأحد</button>
+        </div>
+
+        <div id="scheduleContainer">
+            </div>
+    </div>
+
+    <script>
+        const scheduleData = {
+            'monday': {
+                name: 'الإثنين',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'تاريخ وجغرافيا (دراسة الدرس الأخير - الوحدة الثانية)' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: 'فيزياء: تدوين الأسئلة النظرية في وحدة الأحماض والأسس' },
+                    { time: '23:30 - 01:00', type: 'مادة أساسية 2', content: 'فيزياء: حل سلاسل التمارين (الجزء الأول)' }
+                ]
+            },
+            'tuesday': {
+                name: 'الثلاثاء',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'أدب عربي: إكمال السلسلة الثانية (دراسة البدل، التمييز، والحال)' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: '<span class="discord-badge">Discord 🎧</span> حصة تصحيح مواضيع اللغة الفرنسية' },
+                    { time: '23:30 - 01:00', type: 'مادة أساسية 2', content: 'فيزياء: مواصلة حل سلاسل التمارين' }
+                ]
+            },
+            'wednesday': {
+                name: 'الأربعاء',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'تاريخ وجغرافيا: حل مهام الأسبوع' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: 'فيزياء: تدريب على موضوع شامل (الجزء الأول)' },
+                    { time: '23:30 - 01:00', type: 'مادة أساسية 2', content: 'فيزياء: تدريب على موضوع شامل (الجزء الثاني)' }
+                ]
+            },
+            'thursday': {
+                name: 'الخميس',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'لغة إنجليزية: حفظ مصطلحات كل وحدة + التدرب على الوضعيات' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: 'فيزياء: مراجعة عامة للموضوع الشامل والتصحيح' },
+                    { time: '23:30 - 01:00', type: 'مادة أساسية 2', content: 'فيزياء: استكمال النقائص في وحدة الأحماض والأسس' }
+                ]
+            },
+            'friday': {
+                name: 'الجمعة (نهاية الأسبوع)',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'راحة أو استدراك مهام اللغات (إنجليزية/عربية)' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: '<span class="discord-badge">Discord 🎧</span> حصة دروس الأدب العربي (قواعد السلسلة الثانية)' },
+                    { time: '23:30 - 01:00', type: 'مادة أساسية 2', content: 'رياضيات: حل موضوع شامل (رقم 1)' }
+                ]
+            },
+            'saturday': {
+                name: 'السبت (نهاية الأسبوع)',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'رياضيات: حل موضوع شامل (رقم 2)' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: '<span class="discord-badge">Discord 🎧</span> رياضيات: حصة انطلاقة في محور الاحتمالات' },
+                    { time: '23:30 - 01:30', type: 'مادة أساسية 2', content: 'مراجعة حرة / <br><span class="math-badge">خاص بشعبة رياضيات: إضافة ساعتين دراسة لمحور الجبر للتقدم أكثر</span>' }
+                ]
+            },
+            'sunday': {
+                name: 'الأحد',
+                slots: [
+                    { time: '16:00 - 17:45', type: 'مادة أدبية', content: 'تاريخ وجغرافيا (تثبيت الحفظ والمراجعة)' },
+                    { time: '22:00 - 23:30', type: 'مادة أساسية 1', content: 'تقييم الأسبوع وتدارك النقائص' },
+                    { time: '23:30 - 01:00', type: 'مادة أساسية 2', content: 'التحضير لبرنامج الأسبوع القادم' }
+                ]
+            }
+        };
+
+        function renderSchedule() {
+            const container = document.getElementById('scheduleContainer');
+            let html = '';
+
+            for (const [dayKey, dayData] of Object.entries(scheduleData)) {
+                // جعل يوم الإثنين هو النشط افتراضياً
+                const isActive = dayKey === 'monday' ? 'active' : '';
+                
+                html += `
+                    <div class="schedule-card ${isActive}" id="card-${dayKey}">
+                        <h2 class="day-title">برنامج يوم ${dayData.name}</h2>
+                `;
+
+                dayData.slots.forEach(slot => {
+                    html += `
+                        <div class="time-slot">
+                            <div class="time">
+                                <span>${slot.time}</span>
+                                <span class="subject-type">${slot.type}</span>
+                            </div>
+                            <div class="task">${slot.content}</div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function showDay(selectedDay) {
+            // تحديث الأزرار
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // تحديث البطاقات
+            document.querySelectorAll('.schedule-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`card-${selectedDay}`).classList.add('active');
+        }
+
+        // تشغيل الدالة عند تحميل الصفحة
+        window.onload = renderSchedule;
+    </script>
+</body>
+</html>
